@@ -21,16 +21,16 @@ var goalsModel = loadModel('goals', {
 var monthlyGoalsModel = loadModel('mgoals', {
   _ai: 3,
   goals: [
-    {id: 1, title: "Цель на месяц 1", description: "Описание 1"},
-    {id: 2, title: "Цель на месяц 2", description: "Описание 2"}
+    {id: 1, title: "Задача на месяц 1", description: "Описание 1"},
+    {id: 2, title: "Задача на месяц 2", description: "Описание 2"}
   ]
 });
 
 var dailyGoalsModel = loadModel('dgoals', {
   _ai: 3,
   goals: [
-    {id: 1, title: "Цель на день 1", description: "Описание д1"},
-    {id: 2, title: "Цель на день 2", description: "Описание д2"}
+    {id: 1, title: "Дело на день 1", description: "Описание д1"},
+    {id: 2, title: "Дело на день 2", description: "Описание д2"}
   ]
 });
 
