@@ -34,13 +34,19 @@ var dailyGoalsModel = loadModel('dgoals', {
   ]
 });
 
+models = {
+  goals: goalsModel,
+  mgoals: monthlyGoalsModel,
+  dgoals: dailyGoalsModel
+};
+
 
 function loadModel(name, defaultValue) {
   return JSON.parse(localStorage.getItem(name)) || defaultValue;
 }
 
 function saveModel(name, model) {
-  localStorage.setItem(name, JSON.stringify(model));
+  localStorage.setItem(name, JSON.stringify(model || models[name]));
 }
  
 // If we need to use custom DOM library, let's save it to $$ variable:
@@ -145,6 +151,7 @@ function addGoal(type, type2, model, msg) {
   subsSelection(type);
   $$("."+type2+"s-slide .editing").removeClass("hidden");
   toggleGoalsLinks(type2);
+  toggleInputs(type2);
 }
 
 
@@ -203,4 +210,24 @@ var calendarInline = myApp.calendar({
     onMonthYearChangeStart: function (p) {
         $$('.calendar-custom-toolbar .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
     }
+});
+
+$$('body').on("click", '.edit-goal-desc', function() {
+  var descInput = $$('.goal-desc');
+  descInput[0].contentEditable = true;
+  descInput.focus();
+
+  $$('.save-goal-desc').removeClass('hidden');
+  $$(this).addClass('hidden');
+});
+
+$$('body').on("click", '.save-goal-desc', function() {
+  var descInput = $$('.goal-desc');
+  descInput[0].contentEditable = false;
+  var goalType = $$('.page:last-child').data('page');
+  myApp.template7Data['page:'+goalType].description = descInput.text();
+  saveModel(goalType+"s");
+
+  $$(this).addClass('hidden');
+  $$('.edit-goal-desc').removeClass('hidden');
 });
