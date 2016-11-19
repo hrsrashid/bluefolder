@@ -156,8 +156,8 @@ function addGoal(type, type2, model, msg) {
 
 
 $$('.addGoalBtn').on('click', function() { addGoal("goal", "goal", goalsModel, "Новая цель")});
-$$('.addMonthlyGoalBtn').on('click', function() { addGoal("mgoal", "monthly-goal", monthlyGoalsModel, "Новая месячная цель")});
-$$('.adddailyGoalBtn').on('click', function() { addGoal("dgoal", "daily-goal", dailyGoalsModel, "Новая дневная цель")});
+$$('.addMonthlyGoalBtn').on('click', function() { addGoal("mgoal", "monthly-goal", monthlyGoalsModel, "Новая месячная задача")});
+$$('.adddailyGoalBtn').on('click', function() { addGoal("dgoal", "daily-goal", dailyGoalsModel, "Новое дневное дело")});
 
 function selectGoal(evt, type, model) {
   var id = $$(evt.target).parents('[data-id]').data("id");
