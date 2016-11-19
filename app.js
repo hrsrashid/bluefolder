@@ -148,7 +148,7 @@ function addGoal(type, type2, model, msg) {
   saveModel(type+"s", model);
   sync("#"+type+"sTemplate", model);
   subsDeletion(type+"s");
-  subsSelection(type);
+  subsSelection(type, type2, model);
   $$("."+type2+"s-slide .editing").removeClass("hidden");
   toggleGoalsLinks(type2);
   toggleInputs(type2);
