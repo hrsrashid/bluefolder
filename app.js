@@ -85,15 +85,37 @@ function toggleGoalsLinks(type) {
   }
 }
 
-function editGoals(type) {
+function editGoals(type, cb) {
   $$("."+type+"s-slide .editing").toggleClass("hidden");
   isEditingGoals[type] = !isEditingGoals[type];
   toggleGoalsLinks(type);
+  toggleInputs(type, cb);
+
 }
 
-$$('#changeGoalsBtn').click(function() { editGoals('goal'); });
-$$('#changeMonthlyGoalsBtn').click(function () { editGoals('monthly-goal'); });
-$$('#changeDailyGoalsBtn').click(function () { editGoals('daily-goal'); });
+function toggleInputs(type, cb) {
+  $$(".select-"+type+"-link .item-title").each(function() {
+    if (isEditingGoals[type]) {
+      this.innerHTML = "<input type='text' value='"+this.textContent.trim()+"'>"
+    } else {
+      var value = this.childNodes[0].value.trim();
+      this.innerHTML = value;
+      cb($$(this).parents("[data-id]").data("id"), value);
+    }
+  });
+}
+
+$$('#changeGoalsBtn').click(function() { editGoals('goal', updateTitle.bind(goalsModel, "goals")); });
+$$('#changeMonthlyGoalsBtn').click(function () { editGoals('monthly-goal', updateTitle.bind(monthlyGoalsModel, 'mgoals')); });
+$$('#changeDailyGoalsBtn').click(function () { editGoals('daily-goal', updateTitle.bind(dailyGoalsModel, 'dgoals')); });
+
+function updateTitle(type, id, newTitle) {
+  this.goals.forEach(function(goal) {
+    goal.title = goal.id == id ? newTitle : goal.title; 
+  });
+
+  saveModel(type, this);
+}
 
 function deleteGoal(evt, type, model) {
   myApp.confirm("Вы уверены?", "Удаление цели", function() {
@@ -137,13 +159,13 @@ function selectGoal(evt, type, model) {
     .pop();
 }
 
-function subsSelection(type) {
-  $$(".select-"+type+"-link").on("click", function(evt) { selectGoal(evt, type, goalsModel)});
+function subsSelection(type, type2, model) {
+  $$(".select-"+type2+"-link").on("click", function(evt) { selectGoal(evt, type, model)});
 }
 
-subsSelection('goal');
-subsSelection('mgoal');
-subsSelection('dgoal');
+subsSelection('goal', 'goal', goalsModel);
+subsSelection('mgoal', 'monthly-goal', monthlyGoalsModel);
+subsSelection('dgoal', 'daily-goal', dailyGoalsModel);
 
 
 
