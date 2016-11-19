@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Your app title -->
+    <title>My App</title>
+    <!-- Path to Framework7 iOS CSS theme styles-->
+    <link rel="stylesheet" href="framework7/dist/css/framework7.ios.min.css">
+    <!-- Path to Framework7 iOS related color styles -->
+    <link rel="stylesheet" href="framework7/dist/css/framework7.ios.colors.min.css">
+    <!-- Path to your custom app styles-->
+    <link rel="stylesheet" href="app.css">
+  </head>
+  <body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <!-- Panels overlay-->
+    <div class="panel-overlay"></div>
+    <!-- Views -->
+    <div class="views">
+      <!-- Your main view, should have "view-main" class -->
+      <div class="view view-main">
+        <!-- Top Navbar-->
+        <div class="navbar">
+          <div class="navbar-inner">
+            <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+            <div class="center sliding">ATPlanner</div>
+          </div>
+        </div>
+        <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+        <div class="pages navbar-through">
+          <!-- Page, "data-page" contains page name -->
+          <div data-page="index" class="page">
+            <!-- Scrollable page content -->
+            <div class="page-content">
+              <div class="swiper-container">
+                <!-- Slides wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide goals-slide">
+                      <div class="content-block">
+                        <div class="row content-block-title">
+                          <div class="col-33"></div>
+
+                          <div class="col-33 text-center">
+                            <span>Цели</span>
+                          </div>
+
+                          <div class="col-33 text-right">
+                            <a href="#" class="link" id="changeGoalsBtn">Изменить</a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="list-block">
+                          <ul>
+                            <div id="goalsTemplate">
+                            {{#each goals}}
+                            <li data-id="{{id}}">
+                                <a href="/goal.html" class="item-link select-goal-link">
+                                  <div class="item-content">
+                                    <div class="item-media hidden editing">
+                                        <i class="f7-icons text-red deleteBtn">delete_round_fill</i>
+                                    </div>
+
+                                      <div class="item-inner">
+                                          <div class="item-title">
+                                              {{title}}
+                                          </div>
+                                      </div>
+                                  </div>
+                                </a>
+                            </li>
+                            {{/each}}
+                            </div>
+                          </ul>
+
+                          <div class="content-block">
+                            <i class="f7-icons text-green hidden editing addGoalBtn">add_round_fill</i>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="swiper-slide monthly-goals-slide">
+                      <div class="content-block">
+                        <div class="row content-block-title">
+                          <div class="col-33"></div>
+
+                          <div class="col-33 text-center">
+                            <span>Октябрь</span>
+                          </div>
+
+                          <div class="col-33 text-right">
+                            <a href="#" class="link" id="changeMonthlyGoalsBtn">Изменить</a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="list-block">
+                          <ul>
+                            <div id="mgoalsTemplate">
+                            {{#each goals}}
+                            <li data-id="{{id}}">
+                                <a href="/mgoal.html" class="item-link select-monthly-goal-link">
+                                  <div class="item-content">
+                                    <div class="item-media hidden editing">
+                                        <i class="f7-icons text-red deleteBtn">delete_round_fill</i>
+                                    </div>
+
+                                      <div class="item-inner">
+                                          <div class="item-title">
+                                              {{title}}
+                                          </div>
+                                      </div>
+                                  </div>
+                                </a>
+                            </li>
+                            {{/each}}
+                            </div>
+                          </ul>
+
+                          <div class="content-block">
+                            <i class="f7-icons text-green hidden editing addMonthlyGoalBtn">add_round_fill</i>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                      <div class="content-block">
+                          <div style="padding:0; margin-right:-15px; width:auto" class="content-block-inner">
+                            <div id="calendar-inline-container"></div>
+                          </div>
+                      </div>
+
+                      <div class="list-block">
+                          <ul>
+                            <div id="dgoalsTemplate">
+                            {{#each goals}}
+                            <li data-id="{{id}}">
+                                <a href="/dgoal.html" class="item-link select-daily-goal-link">
+                                  <div class="item-content">
+                                    <div class="item-media hidden editing">
+                                        <i class="f7-icons text-red deleteBtn">delete_round_fill</i>
+                                    </div>
+
+                                      <div class="item-inner">
+                                          <div class="item-title">
+                                              {{title}}
+                                          </div>
+                                      </div>
+                                  </div>
+                                </a>
+                            </li>
+                            {{/each}}
+                            </div>
+                          </ul>
+
+                          <div class="content-block">
+                            <i class="f7-icons text-green hidden editing addDailyGoalBtn">add_round_fill</i>
+                          </div>
+                      </div>
+                  </div>           
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Path to Framework7 Library JS-->
+    <script type="text/javascript" src="framework7/dist/js/framework7.min.js"></script>
+    <!-- Path to your app js-->
+    <script type="text/javascript" src="app.js"></script>
+  </body>
+</html>
