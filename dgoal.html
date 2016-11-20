@@ -6,7 +6,7 @@
             <span>Назад</span>
           </a>
       </div>
-      <div class="center sliding">Дневная цель</div>
+      <div class="center sliding">Дневное дело</div>
       <div class="right">
         <a href="#" class="link edit-goal-desc">
           Изменить
@@ -20,7 +20,13 @@
 
 <div data-page="dgoal" class="page">
   <div class="page-content">
-    <p class="text-center content-block-title">{{title}}</p>
+    <div class="row content-block-title">
+      <div class="col-33"></div>
+      <div class="col-33 text-center">{{title}}</div>
+      <div class="col-33 text-right">
+        <a href="#" class="open-gallery link"><i class="f7-icons">{{icon}}</i> Иконка</a>
+      </div>
+    </div>
 
     <div class="content-block">
       <div class="content-block-inner goal-desc">{{description}}</div>

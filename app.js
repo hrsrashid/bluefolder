@@ -148,7 +148,7 @@ function addGoal(type, type2, model, msg) {
   saveModel(type+"s", model);
   sync("#"+type+"sTemplate", model);
   subsDeletion(type+"s");
-  subsSelection(type, type2, model);
+  subsSelection(type, model);
   $$("."+type2+"s-slide .editing").removeClass("hidden");
   toggleGoalsLinks(type2);
   toggleInputs(type2);
@@ -166,13 +166,13 @@ function selectGoal(evt, type, model) {
     .pop();
 }
 
-function subsSelection(type, type2, model) {
-  $$(".select-"+type2+"-link").on("click", function(evt) { selectGoal(evt, type, model)});
+function subsSelection(type, model) {
+  $$("#"+type+"sTemplate .item-link").on("click", function(evt) { selectGoal(evt, type, model)});
 }
 
-subsSelection('goal', 'goal', goalsModel);
-subsSelection('mgoal', 'monthly-goal', monthlyGoalsModel);
-subsSelection('dgoal', 'daily-goal', dailyGoalsModel);
+subsSelection('goal', goalsModel);
+subsSelection('mgoal', monthlyGoalsModel);
+subsSelection('dgoal', dailyGoalsModel);
 
 
 
@@ -230,4 +230,20 @@ $$('body').on("click", '.save-goal-desc', function() {
 
   $$(this).addClass('hidden');
   $$('.edit-goal-desc').removeClass('hidden');
+});
+
+$$('body').on("click", '.open-gallery', function() {
+  myApp.popup(".popup-gallery");
+});
+
+$$('body').on("click", '.f7-demo-icon-cell', function(evt) {
+  var icon = evt.target.textContent.trim()
+  var goalType = $$('.page:last-child').data('page');
+  myApp.template7Data['page:'+goalType].icon = icon;
+  saveModel(goalType+"s");
+  sync("#"+goalType+"sTemplate", models[goalType+"s"]);
+  subsDeletion(goalType+"s");
+  subsSelection(goalType, models[goalType+"s"]);
+  $$('.open-gallery .f7-icons').text(icon);
+  myApp.closeModal('.popup-gallery');
 });
