@@ -10,6 +10,91 @@ var myApp = new Framework7({
   }
 });
 
+var $$ = Dom7;
+
+// CALENDAR 
+
+var monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'];
+ 
+var calendarInline = myApp.calendar({
+    container: '#calendar-inline-container',
+    value: [new Date()],
+    weekHeader: false,
+    toolbarTemplate: 
+        '<div class="toolbar calendar-custom-toolbar">' +
+            '<div class="toolbar-inner">' +
+                '<div class="left">' +
+                    '<a href="#" class="link icon-only"><i class="icon icon-back"></i></a>' +
+                '</div>' +
+                '<div class="center"></div>' +
+                '<div class="right">' +
+                    '<a href="#" class="link icon-only"><i class="icon icon-forward"></i></a>' +
+                '</div>' +
+            '</div>' +
+        '</div>',
+    onOpen: function (p) {
+        $$('.calendar-custom-toolbar .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
+        $$('.calendar-custom-toolbar .left .link').on('click', function () {
+            calendarInline.prevMonth();
+        });
+        $$('.calendar-custom-toolbar .right .link').on('click', function () {
+            calendarInline.nextMonth();
+        });
+    },
+    onMonthYearChangeStart: function (p) {
+        $$('.calendar-custom-toolbar .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
+    },
+    onChange: function() {
+      if (dailyGoalsModel) {
+        sync("#dgoalsTemplate", dailyGoalsModel);
+        subsDeletion("dgoals");
+        subsSelection('dgoal', dailyGoalsModel);
+        $$(".daily-goals-slide .editing").addClass("hidden");
+        isEditingGoals['daily-goals'] = false
+      }
+    }
+});
+
+
+var monthsCal = myApp.calendar({
+  container: "#monthsCal",
+  value: [new Date()],
+  toolbarTemplate: 
+    '<div class="toolbar calendar-custom-toolbar">' +
+        '<div class="toolbar-inner">' +
+            '<div class="left">' +
+                '<a href="#" class="link icon-only"><i class="icon icon-back"></i></a>' +
+            '</div>' +
+            '<div class="center"></div>' +
+            '<div class="right">' +
+                '<a href="#" class="link icon-only"><i class="icon icon-forward"></i></a>' +
+            '</div>' +
+        '</div>' +
+    '</div>',
+    onOpen: function (p) {
+        $$('#monthsCal .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
+        $$('#monthsCal .left .link').on('click', function () {
+            monthsCal.prevMonth();
+        });
+        $$('#monthsCal .right .link').on('click', function () {
+            monthsCal.nextMonth();
+        });
+    },
+    onMonthYearChangeStart: function (p) {
+        $$('#monthsCal .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
+
+        if (monthlyGoalsModel) {
+          monthlyGoalsModel.setMY(p.currentYear, p.currentMonth);
+          sync("#mgoalsTemplate", monthlyGoalsModel);
+          subsDeletion("mgoals");
+          subsSelection('mgoal', monthlyGoalsModel);
+          $$(".monthly-goals-slide .editing").addClass("hidden");
+          isEditingGoals['monthly-goals'] = false
+        }
+    }
+});
+
+
 var goalsModel = loadModel('goals', {
   _ai: 3,
   goals: [
@@ -21,18 +106,64 @@ var goalsModel = loadModel('goals', {
 var monthlyGoalsModel = loadModel('mgoals', {
   _ai: 3,
   goals: [
-    {id: 1, title: "Задача на месяц 1", description: "Описание 1"},
-    {id: 2, title: "Задача на месяц 2", description: "Описание 2"}
+    {id: 1, date: (new Date()).toISOString(), title: "Задача на месяц 1", description: "Описание 1"},
+    {id: 2, date: (new Date()).toISOString(), title: "Задача на месяц 2", description: "Описание 2"}
   ]
 });
 
 var dailyGoalsModel = loadModel('dgoals', {
   _ai: 3,
   goals: [
-    {id: 1, title: "Дело на день 1", description: "Описание д1"},
-    {id: 2, title: "Дело на день 2", description: "Описание д2"}
+    {id: 1, date: (new Date()).toISOString(), title: "Дело на день 1", description: "Описание д1"},
+    {id: 2, date: (new Date()).toISOString(), title: "Дело на день 2", description: "Описание д2"}
   ]
 });
+
+ 
+
+goalsModel.new = function() { return {id: this._ai++, title: "Новая цель"}; }
+goalsModel.get = function() { return this; }
+
+monthlyGoalsModel.setMY = function(m, y) {
+  this.m = m;
+  this.y = y;
+};
+monthlyGoalsModel.new = function() {
+  return {
+    id: this._ai++,
+    title: "Новая месячная задача",
+    date: (new Date(this.y || (new Date()).getFullYear(), this.m || 0, 1)).toISOString() 
+  };
+};
+monthlyGoalsModel.get = function() {
+  var date = new Date(this.y || (new Date()).getFullYear(), this.m || 0, 1);
+
+  return Object.assign({}, this, {goals:this.goals.filter(function(goal) {
+    var gdate = new Date(goal.date);
+
+    return gdate.getMonth() == date.getMonth()
+      && gdate.getFullYear() == date.getFullYear();
+  })})
+};
+
+dailyGoalsModel.new = function() {
+  return {
+    id: this._ai++,
+    title: "Новое дневное дело",
+    date: (new Date(calendarInline.value[0] || Date.now())).toISOString() 
+  };
+};
+dailyGoalsModel.get = function() {
+  var date = new Date(calendarInline.value[0] || Date.now());
+  
+  return Object.assign({}, this, {goals:this.goals.filter(function(goal) {
+    var gdate = new Date(goal.date);
+
+    return gdate.getMonth() == date.getMonth()
+      && gdate.getFullYear() == date.getFullYear()
+      && gdate.getDate() == date.getDate();
+  })})
+};
 
 models = {
   goals: goalsModel,
@@ -48,16 +179,13 @@ function loadModel(name, defaultValue) {
 function saveModel(name, model) {
   localStorage.setItem(name, JSON.stringify(model || models[name]));
 }
- 
-// If we need to use custom DOM library, let's save it to $$ variable:
-var $$ = Dom7;
 
 var templates = {};
 
 function sync(templateName, context) {
   var template = templates[templateName] || $$(templateName).html();
   templates[templateName] = template;
-  $$(templateName).html(Template7.compile(template)(context));
+  $$(templateName).html(Template7.compile(template)(context.get()));
 }
 
 sync("#goalsTemplate", goalsModel);
@@ -104,7 +232,7 @@ function toggleInputs(type, cb) {
     if (isEditingGoals[type]) {
       this.innerHTML = "<input type='text' value='"+this.textContent.trim()+"'>"
     } else {
-      var value = this.childNodes[0].value.trim();
+      var value = (this.childNodes[0].value || "").trim();
       this.innerHTML = value;
       cb($$(this).parents("[data-id]").data("id"), value);
     }
@@ -142,9 +270,8 @@ subsDeletion("mgoals");
 subsDeletion("dgoals");
 
 
-function addGoal(type, type2, model, msg) {
-  var newid = model._ai++;
-  model.goals.push({id: newid, title: msg});
+function addGoal(type, type2, model) {
+  model.goals.push(model.new());
   saveModel(type+"s", model);
   sync("#"+type+"sTemplate", model);
   subsDeletion(type+"s");
@@ -155,9 +282,9 @@ function addGoal(type, type2, model, msg) {
 }
 
 
-$$('.addGoalBtn').on('click', function() { addGoal("goal", "goal", goalsModel, "Новая цель")});
-$$('.addMonthlyGoalBtn').on('click', function() { addGoal("mgoal", "monthly-goal", monthlyGoalsModel, "Новая месячная задача")});
-$$('.adddailyGoalBtn').on('click', function() { addGoal("dgoal", "daily-goal", dailyGoalsModel, "Новое дневное дело")});
+$$('.addGoalBtn').on('click', function() { addGoal("goal", "goal", goalsModel)});
+$$('.addMonthlyGoalBtn').on('click', function() { addGoal("mgoal", "monthly-goal", monthlyGoalsModel)});
+$$('.addDailyGoalBtn').on('click', function() { addGoal("dgoal", "daily-goal", dailyGoalsModel)});
 
 function selectGoal(evt, type, model) {
   var id = $$(evt.target).parents('[data-id]').data("id");
@@ -175,42 +302,6 @@ subsSelection('mgoal', monthlyGoalsModel);
 subsSelection('dgoal', dailyGoalsModel);
 
 
-
-
-
-// CALENDAR 
-
-var monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'];
- 
-var calendarInline = myApp.calendar({
-    container: '#calendar-inline-container',
-    value: [new Date()],
-    weekHeader: false,
-    toolbarTemplate: 
-        '<div class="toolbar calendar-custom-toolbar">' +
-            '<div class="toolbar-inner">' +
-                '<div class="left">' +
-                    '<a href="#" class="link icon-only"><i class="icon icon-back"></i></a>' +
-                '</div>' +
-                '<div class="center"></div>' +
-                '<div class="right">' +
-                    '<a href="#" class="link icon-only"><i class="icon icon-forward"></i></a>' +
-                '</div>' +
-            '</div>' +
-        '</div>',
-    onOpen: function (p) {
-        $$('.calendar-custom-toolbar .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
-        $$('.calendar-custom-toolbar .left .link').on('click', function () {
-            calendarInline.prevMonth();
-        });
-        $$('.calendar-custom-toolbar .right .link').on('click', function () {
-            calendarInline.nextMonth();
-        });
-    },
-    onMonthYearChangeStart: function (p) {
-        $$('.calendar-custom-toolbar .center').text(monthNames[p.currentMonth] +', ' + p.currentYear);
-    }
-});
 
 $$('body').on("click", '.edit-goal-desc', function() {
   var descInput = $$('.goal-desc');

@@ -82,7 +82,19 @@
   margin-bottom: 40px;
 }
 
-f7-demo-icons .f7-demo-icon-label {
+.f7-demo-icons .f7-demo-icon-label {
   font-size: 11px;
   margin-top: 10px;
+}
+
+.pad {
+  padding: 0 15px;
+}
+
+#monthsCal .picker-modal-inner {
+  height: 0;
+}
+
+#monthsCal .picker-modal.picker-calendar {
+  height: auto;
 }
